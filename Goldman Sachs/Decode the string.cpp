@@ -11,48 +11,38 @@ class Solution{
 public:
     string decodedString(string s){
         // code here
-        string num = "";
-        string ans="";
-        int n;
-        string temp="";
-        string temp2="";
         stack<char> st;
         int p = 0;
-        
-        while(p<s.size())
-        {    if(s[p]==']')
-             {  while(st.top() != '[')
-                {
+        string ans;
+        while(p<s.size()){
+            // push into stack until ']' is encountered    
+            if(s[p]==']'){  
+                string temp="";
+                string temp2="";
+                string num = "";
+                while(st.top() != '['){
                     temp=st.top()+temp;
                     st.pop();
                 }
+                // Pop '['
                  st.pop();
-              while(isdigit(st.top()))
-                {    num=st.top()+num;
-                     st.pop();
-                     if(st.empty()){
-                         break;
-                     }
+                // Extract number
+                while(!st.empty() && isdigit(st.top())){    
+                    num=st.top()+num;
+                    st.pop();
                 }
-                n=stoi(num);
+                int n=stoi(num);
                 for(int i=1;i<=n;i++)
-                {   temp2=temp2+temp;
-                }
-                if(st.empty())
-                {   ans=temp2;
+                    temp2=temp2+temp;
+                if(st.empty()){   
+                    ans=temp2;
                     break;
                 }
                 for(int i=0;i<temp2.size();i++)
-                {    st.push(temp2[i]);
-                }
-                
-                temp="";
-                temp2="";
-                num="";
+                    st.push(temp2[i]);
             }
             else
-            {    st.push(s[p]);
-            }
+                st.push(s[p]);
             p++;
         }
         return ans;

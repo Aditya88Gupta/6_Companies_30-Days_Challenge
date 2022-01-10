@@ -5,7 +5,9 @@ class Solution
     //when order does not matter.
     long long countWays(int m)
     {
-        // your code here
+        // total ways = number of times 2 can be used + 1
+        // +1 for 0 2 is used
+
        return (long long)m/2+1;
     }
 };

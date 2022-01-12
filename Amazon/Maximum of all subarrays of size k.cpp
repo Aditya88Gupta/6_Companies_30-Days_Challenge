@@ -12,24 +12,33 @@ class Solution
 {
   public:
     //Function to find maximum of each subarray of size k.
-    vector <int> max_of_subarrays(int a[], int n, int k)
-   {
-       vector<int>v;
-       deque<int>q(k);
-       int i;
-       for(i=0;i<k;i++){
-           while(!q.empty() && a[i]>=a[q.back()])q.pop_back();
-           q.push_back(i);
-       }
-       for(;i<n;i++){
-           v.push_back(a[q.front()]);
-           while(!q.empty() && q.front()<=(i-k))q.pop_front();
-           while(!q.empty() && a[i]>a[q.back()])q.pop_back();
-           q.push_back(i);
-       }
-       v.push_back(a[q.front()]);
-       return v;
-   }
+    vector <int> max_of_subarrays(int *arr, int n, int k)
+    {
+        // We will store idx of elements
+        deque<int> dq;
+        vector<int> res;
+        
+        // Processing first window
+        for(int i=0;i<k;i++){
+            // Remove all elements from dq < arr[i]
+            while(!dq.empty() && arr[dq.back()]<=arr[i])
+                dq.pop_back();
+            dq.push_back(i);
+        }
+        
+        for(int i=k;i<n;i++){
+            res.push_back(arr[dq.front()]);
+            // Remove max element if not part of current window
+            while(!dq.empty() && dq.front()<=(i-k))
+                dq.pop_front();
+            // Remove all elements from dq < arr[i]    
+            while(!dq.empty() && arr[dq.back()]<arr[i])
+                dq.pop_back();
+            dq.push_back(i);
+        }
+        res.push_back(arr[dq.front()]);
+        return res;
+    }
 };
 
 // { Driver Code Starts.

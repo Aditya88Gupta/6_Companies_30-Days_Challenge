@@ -1,56 +1,136 @@
-class Solution
-{
-    public String nextPalin(String str) 
-    { 
-        if(str.length()<=2)
-            return("-1");
+// { Driver Code Starts
+//Initial template for C++
 
-        int arr[]=new int [str.length()/2];
-        
-        for(int i=0;i<str.length()/2;i++)
-            arr[i]=(int)str.charAt(i)-48;
-        
-           for(int i=(str.length()/2)-1;i>=1;i--){
-               if(arr[i]>arr[i-1]){
-                   int index=findIndex(arr[i-1],i,(str.length()/2)-1,arr);
-                   swap(i-1,index,arr);
-                   reverse(arr,i,(str.length()/2)-1);
-                   break;
-               }
-           }
-           int ans[]=new int [str.length()];
-           for(int i=0;i<arr.length;i++){
-               ans[i]=arr[i];
-               ans[str.length()-i-1]=arr[i];
-           }
-           if(str.length()%2!=0)
-                ans[(str.length()/2)]=(int)(str.charAt(str.length()/2))-48;
-           StringBuffer sb=new StringBuffer();
-           for(int i=0;i<ans.length;i++)
-                sb.append(ans[i]);
-            String s=sb.toString();
-            return(s.equals(str)?"-1":s);
-    }//nextPalin
-    public int findIndex(int num,int s,int e,int arr[]){
-        int i=s;
-        while(i<=e && arr[i]>num)
-            i++;
-        return(i-1);
-    }//findIndex
-    public void swap(int i,int j,int arr[]){
-        int temp=arr[i];
-        arr[i]=arr[j];
-        arr[j]=temp;
-    }//swap
-    public void reverse(int arr[],int s,int e){
-        int i=s;
-        int j=e;
-        while(i<=j){
-            int temp=arr[i];
-            arr[i]=arr[j];
-            arr[j]=temp;
-            i++;
-            j--;
+#include <bits/stdc++.h>
+using namespace std;
+
+
+ // } Driver Code Ends
+//User function template for C++
+
+class Solution{
+  public:
+    
+    void nextPermutation(string &str){
+        int index=0;
+        for(int i=str.length()-2;i>=0;i--){
+            int tmp=i;
+            char curMin='A';
+            // find smallest element > i
+            for(int j=i;j<str.length();j++){
+                if(str[i]<str[j] && curMin>str[j]){
+                    tmp=j;
+                    curMin=str[j];
+                }
+            }
+            // swap ith with next greatest element
+            if(tmp!=i){
+                char curMax=str[tmp];
+                str[tmp]=str[i];
+                str[i]=curMax;
+                index=i+1;
+                break;
+            }
         }
-    }//reverse
-}
+        sort(str.begin()+index,str.end());
+    }
+    
+    string nextPalin(string N) { 
+        //complete the function here
+        if(N.length()<=3)
+            return "-1";
+        string half = N.substr(0,N.length()/2);
+        nextPermutation(half);
+        if(half<=N.substr(0,N.length()/2))
+            return "-1";
+        string res=half;
+        if(N.length()%2!=0)
+            res+=N[N.length()/2];
+        reverse(half.begin(),half.end());
+        res+=half;
+        return res;
+    }
+};
+
+// { Driver Code Starts.
+
+int main() {
+
+    int t;
+    cin >> t;
+    while(t--){
+        string s;
+        cin >> s;
+        Solution obj;
+        cout << obj.nextPalin(s) << endl;
+    }
+    return 0;
+}  // } Driver Code Ends// { Driver Code Starts
+//Initial template for C++
+
+#include <bits/stdc++.h>
+using namespace std;
+
+
+ // } Driver Code Ends
+//User function template for C++
+
+class Solution{
+  public:
+    
+    void nextPermutation(string &str){
+        int index=0;
+        for(int i=str.length()-2;i>=0;i--){
+            int tmp=i;
+            char curMin='A';
+            // find smallest element > i
+            for(int j=i;j<str.length();j++){
+                if(str[i]<str[j] && curMin>str[j]){
+                    tmp=j;
+                    curMin=str[j];
+                }
+            }
+            // swap ith with next greatest element
+            if(tmp!=i){
+                char curMax=str[tmp];
+                str[tmp]=str[i];
+                str[i]=curMax;
+                index=i+1;
+                break;
+            }
+        }
+        sort(str.begin()+index,str.end());
+    }
+    
+    string nextPalin(string N) { 
+        if(N.length()<=3)
+            return "-1";
+        string half = N.substr(0,N.length()/2);
+        nextPermutation(half);
+        // if next does not exists
+        if(half<=N.substr(0,N.length()/2))
+            return "-1";
+        string res=half;
+        // if odd length, then add the mid ele
+        if(N.length()%2!=0)
+            res+=N[N.length()/2];
+        reverse(half.begin(),half.end());
+        res+=half;
+        return res;
+    }
+};
+
+// { Driver Code Starts.
+
+int main() {
+
+    int t;
+    cin >> t;
+    while(t--){
+        string s;
+        cin >> s;
+        Solution obj;
+        cout << obj.nextPalin(s) << endl;
+    }
+    return 0;
+}  // } Driver Code Ends

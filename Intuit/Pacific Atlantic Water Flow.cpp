@@ -1,32 +1,66 @@
-vector<vector<int>> pacificAtlantic(vector<vector<int>>& heights) {
-        int n = heights.size() , m = heights[0].size() ; 
-        int dx[4] = {-1 , 0 , 1 , 0} ;
-        int dy[4] = {0 , -1 , 0 , 1} ;
-        vector<vector<bool>> atlantic(n , vector<bool>(m , 0)) , pacific(n , vector<bool>(m , 0)) ;
-        vector<vector<int>> ans ; 
+class Solution {
+    
+    int n,m;
+public:
+    
+    // void printMat(){
+    //     for(int i=0;i<n;i++){
+    //         for(int j=0;j<m;j++)
+    //             cout<<pTable[i][j]<<" ";
+    //         cout<<endl;    
+    //     }
+    // }
         
-        auto isValid = [&](int x , int y , int from , vector<vector<bool>> &vis){
-            if(x < 0 || x >= n || y < 0 || y >= m || from > heights[x][y] || vis[x][y])  return false ; 
-            else    return true ;
-        };
+    void findPath(int i, int j, vector<vector<int>>& dpTable, vector<vector<int>> heights, int prev){
         
-        function<void(int x , int y , vector<vector<bool>> &vis)> dfs = [&](int x , int y , vector<vector<bool>> &vis){
-            vis[x][y] = 1 ;
-            for(int i = 0 ; i < 4 ; i++){
-                if(isValid(x + dx[i] , y + dy[i] , heights[x][y] , vis)){
-                    dfs(x + dx[i] , y + dy[i] , vis) ;
-                }
-            }
-            if(atlantic[x][y] && pacific[x][y]) ans.push_back(vector<int>{x , y}) ;
-        };
+        if( i<0|| i>=n || j<0 || j>=m || dpTable[i][j]!=-1 || heights[i][j]<prev)
+            return;
         
-        for(int i = 0 ; i < n ; i++){
-            if(!atlantic[i][m -1])  dfs(i , m - 1 , atlantic) ;
-            if(!pacific[i][0])  dfs(i , 0 , pacific) ;
-        }
-        for(int i = 0 ; i < m ; i++){
-            if(!atlantic[n - 1][i]) dfs(n - 1 , i , atlantic) ;
-            if(!pacific[0][i])  dfs(0 , i , pacific) ;
-        }
-        return ans ; 
+        dpTable[i][j]=1;
+        findPath(i-1,j,dpTable,heights,heights[i][j]);
+        findPath(i+1,j,dpTable,heights,heights[i][j]);
+        findPath(i,j-1,dpTable,heights,heights[i][j]);
+        findPath(i,j+1,dpTable,heights,heights[i][j]);
     }
+    
+//     void altlantic(int i, int j, vector<vector<int>> heights, int prev){
+        
+//         if(i<0||i>=n || j<0||j>=m || aTable[i][j]!=0 || heights[i][j]<prev)
+//             return;
+        
+//         aTable[i][j]=1;
+//         altlantic(i-1,j,heights,heights[i][j]);
+//         altlantic(i+1,j,heights,heights[i][j]);
+//         altlantic(i,j-1,heights,heights[i][j]);
+//         altlantic(i,j+1,heights,heights[i][j]);
+      
+//     }
+    
+    vector<vector<int>> pacificAtlantic(vector<vector<int>>& heights) {
+        n = heights.size();
+        m = heights[0].size();
+        
+        vector<vector<int>> pacific(n,vector<int>(m,-1));
+        for(int i=0;i<n;i++)
+            findPath(i,0,pacific,heights,-1);
+        
+        for(int j=0;j<m;j++)
+            findPath(0,j,pacific,heights,-1);
+        
+        vector<vector<int>> atlantic(n,vector<int>(m,-1));
+        for(int i=0;i<n;i++)
+            findPath(i,m-1,atlantic,heights,-1);
+
+        for(int j=0;j<m;j++)
+            findPath(n-1,j,atlantic,heights,-1);
+        
+        vector<vector<int>> res;
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){   
+               if(atlantic[i][j]==1 && pacific[i][j]==1)
+                   res.push_back({i,j});
+            }
+        }
+        return res;
+    }
+};

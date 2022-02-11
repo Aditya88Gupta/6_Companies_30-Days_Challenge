@@ -1,62 +1,77 @@
-pair<int,int> findSmallestRange(int arr[][N], int n, int k)
-   {
-       //code here
-       pair<int,int> res;
-       res.first=-1;
-       res.second=-1;
-       
-       if(k==1)
-       {
-           res.first=arr[0][0];
-           res.second=arr[0][0];
-           
-           return res;
-       }
-       
-       int diff=INT_MAX;
-       
-       //order of values in tuple is.
-       //1.element.
-       //2.index of array to which this element belongs.
-       //3.index of the element in that array.
-       
-       multiset<tuple<int,int,int>> ms;
-       
-       for(int i=0;i<k;i++)
-       {
-           ms.insert(make_tuple(arr[i][0],i,0));
-       }
-       
-       while(ms.size()==k)
-       {
-           auto temp1=*(ms.begin());
-           
-           ms.erase(ms.begin());
-           
-           int val1=get<0>(temp1);
-           int arr_pos1=get<1>(temp1);
-           int val_pos1=get<2>(temp1);
-           
-           auto temp2=*(ms.rbegin());
-           
-           int arr_pos2=get<1>(temp2);
-           int val_pos2=get<2>(temp2);
-           int val2=get<0>(temp2);
-           
-           if(diff > val2-val1)
-           {
-               diff=val2-val1;
-               res.first=arr[arr_pos1][val_pos1];
-               res.second=arr[arr_pos2][val_pos2];
-           }
-           
-           val_pos1++;
-           
-           if(val_pos1<n)
-           {
-               ms.insert(make_tuple(arr[arr_pos1][val_pos1],arr_pos1,val_pos1));
-           }
-       }
-       
-       return res;
-   }
+// { Driver Code Starts
+#include<bits/stdc++.h>
+using namespace std;
+#define N 1000
+
+
+ // } Driver Code Ends
+// you are required to complete this function 
+// function should print the required range
+
+// ele, list, idx
+typedef pair<int,pair<int,int>> pi;
+
+class Solution{
+    public:
+    pair<int,int> findSmallestRange(int arr[][N], int n, int k){
+        
+        // Min Heap, will contain one element from each list
+        priority_queue<pi,vector<pi>,greater<pi>> pq;
+        int curMax = INT_MIN;
+        for(int i=0;i<k;i++){
+            if(arr[i][0]>curMax)
+                curMax=arr[i][0];
+            pq.push(make_pair(arr[i][0],make_pair(i,0)));
+        }
+        
+        // lower&upper bound
+        int Min = 0;
+        int Max = 100000;
+        
+        
+        // curMin && curMax are the min and max elements currently in the pq
+        while(!pq.empty()){
+            int curMin = pq.top().first;
+            // if we have a better range
+            if(curMax-curMin<Max-Min){
+                Max = curMax;
+                Min = curMin;
+            }
+            // next element of the list from which curMin was extracted
+            int x = pq.top().second.first;
+            int y = pq.top().second.second+1;
+            pq.pop();
+            // if a list has been completed processed then exit
+            if(y==n)
+                break;
+            if(curMax<arr[x][y])
+                curMax=arr[x][y];
+            pq.push(make_pair(arr[x][y],make_pair(x,y)));    
+        }
+        
+        return make_pair(Min,Max);
+    }
+};
+
+// { Driver Code Starts.
+int main()
+{
+    int t;
+    cin>>t;
+    while(t--)
+    {
+        int n, k;
+        cin>>n>>k;
+        int arr[N][N];
+        pair<int,int> rangee;
+        for(int i=0; i<k; i++)
+            for(int j=0; j<n; j++)
+                cin>>arr[i][j];
+        Solution obj;
+	    rangee = obj.findSmallestRange(arr, n, k);
+	    cout<<rangee.first<<" "<<rangee.second<<"\n";
+    }   
+	return 0;
+}
+
+  // } Driver Code Ends
